@@ -17,7 +17,6 @@ export default function RepoList() {
         try{
             const gitResponse = await fetch('https://api.github.com/search/repositories?q=stars:>1&per_page=100&type=Repositories')
             const data = await gitResponse.json();
-            console.log('test')
             const repos = data.items
             if (repos && repos.length > 0) {
                 setRepos(repos);
