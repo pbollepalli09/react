@@ -4,7 +4,8 @@
 
         export default function  RepoHome(props) {
 
-            const [commits, avatar, name,commitUrl, stars, htmlUrl] = useState([]);
+            const [commits] = useState([]);
+            const {avatar, commitUrl, name, stars, htmlUrl} = props.location.state;
             useEffect( ( ) => {
                 getRepoData();
                 return () => {}
@@ -12,7 +13,7 @@
 
         const getRepoData = async () => {
             try{
-                //const{avatar, commitUrl, name, stars, htmlUrl} = this.props.location.state;
+
                 let date = new Date().getTime();
                 let oneDay = 24*3600*1000;
                 let yest =  date-oneDay;
@@ -33,16 +34,17 @@
                 return(
                     <div className="repository-home">
                         <div>
-                            <h1>Welcome to {props.location.state.name} Repository Home</h1>
+                            <h1>Welcome to {name} Repository Home</h1>
 
                             <div className="profile-card">
                                 <div className="repository-image">
-                                    <img src={props.location.state.avatar} alt={props.location.state.name} height="200" width="200"/>
+                                    <img src={avatar} alt={name} height="200" width="200"/>
                                 </div>
 
                                 <div className="profile-content">
-                                    <h2>Name: {props.location.state.name}</h2>
-                                    <h3>Url: {props.location.state.htmlUrl}</h3>
+                                    <h2>Name: {name}</h2>
+                                    <h3>Url: {htmlUrl}</h3>
+                                    <h3>Starts: {stars}</h3>
                                 </div>
 
                             </div>
