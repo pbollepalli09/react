@@ -1,117 +1,58 @@
-import React from 'react';
-import axios from 'axios';
-import '../styles/RepoHome.css';
-import CommitCard from './CommitCard';
+        import {React, useEffect, useState } from 'react';
+        import '../styles/RepoHome.css';
+        import CommitCard from './CommitCard';
 
-class RepoHome extends React.Component{
-    constructor(props) {
-        super(props);
+        export default function  RepoHome(props) {
 
-        this.state = {
-            commits: [],
-            loading: true,
-            error: null,
-            avatar:"",
-            stars:0,
-            commitUrl:"",
-            name:"",
-            htmlUrl:""
+            const [commits, avatar, name,commitUrl, stars, htmlUrl] = useState([]);
+            useEffect( ( ) => {
+                getRepoData();
+                return () => {}
+            },[]);
+
+        const getRepoData = async () => {
+            try{
+                //const{avatar, commitUrl, name, stars, htmlUrl} = this.props.location.state;
+                let date = new Date().getTime();
+                let oneDay = 24*3600*1000;
+                let yest =  date-oneDay;
+                let yesterday = new Date(yest).toISOString();
+                let url = `${commitUrl}?since=${yesterday}`;
+                const gitResponse = await fetch(url)
+                const commits = await gitResponse.data;
+                console.log("commits repoHome success=======>", commits);
+                /*if (commits && commits.length > 0){
+                    setCommits(commits)
+                    console.log("commits repoHome success=======>", commits);
+                }*/
+            }catch(error){
+                //setError(repos.error);
+                console.error(`fetch error: ${error}`)
+            }
         };
-    }
+                return(
+                    <div className="repository-home">
+                        <div>
+                            <h1>Welcome to {props.location.state.name} Repository Home</h1>
 
-    componentDidMount(){
+                            <div className="profile-card">
+                                <div className="repository-image">
+                                    <img src={props.location.state.avatar} alt={props.location.state.name} height="200" width="200"/>
+                                </div>
 
-        const{avatar, commitUrl, name, stars, htmlUrl} = this.props.location.state;
+                                <div className="profile-content">
+                                    <h2>Name: {props.location.state.name}</h2>
+                                    <h3>Url: {props.location.state.htmlUrl}</h3>
+                                </div>
 
-        let date = new Date().getTime();
-        let oneDay = 24*3600*1000;
-        let yest =  date-oneDay;
-        let yesterday = new Date(yest).toISOString();
-        let url = `${commitUrl}?since=${yesterday}`;
+                            </div>
 
-        axios.get(url)
-            .then(response => {
-                const commitData = response.data;
-                console.log(commitData);
-
-                this.setState({
-                    commits: commitData,
-                    loading: false,
-                });
-            })
-            .catch(error => {
-                this.setState({
-                    error: error,
-                    loading: false,
-                });
-                console.log(error);
-            });
-
-
-
-        this.setState({
-            avatar,
-            stars,
-            commitUrl,
-            name,
-            htmlUrl
-        });
-
-    }
-
-    renderLoading() {
-        return (
-            <div>
-                Loading...
-            </div>
-        );
-    }
-
-    renderError() {
-        return (
-            <div>
-                <div>
-                    Sorry, an error ocurred: {this.state.error.response.data.message}
-                </div>
-            </div>
-        );
-    }
-
-
-    renderList(){
-        const{ commits, avatar, stars, commitUrl, name, htmlUrl} = this.state;
-
-        return(
-            <div className="repository-home">
-                <div>
-                    <h1>Welcome to {name} Repository Home</h1>
-
-                    <div className="profile-card">
-                        <div className="repository-image">
-                            <img src={avatar} alt={name} height="200" width="200"/>
+                            <div className="commitlist-wrapper">
+                                {commits.map((commit, index) =>
+                                    <CommitCard commit={commit} index={index} key={commit.sha} />,
+                                )}
+                            </div>
                         </div>
-
-                        <div className="profile-content">
-                            <h2>Name: {name}</h2>
-                            <h3>Url: {htmlUrl}</h3>
-                        </div>
-
                     </div>
-
-                    <div className="commitlist-wrapper">
-                        {commits.map((commit, index) =>
-                            <CommitCard commit={commit} index={index} key={commit.sha} />,
-                        )}
-                    </div>
-                </div>
-            </div>
-        )
-    }
-
-    render() {
-        return this.state.loading ? this.renderLoading() : this.renderList();
-    }
-
-}
-
-export default RepoHome;
+                    )
+               }

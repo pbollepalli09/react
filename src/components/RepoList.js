@@ -20,7 +20,7 @@ export default function RepoList() {
             const repos = data.items
             if (repos && repos.length > 0) {
                 setRepos(repos);
-                console.log("fetch success=======>", repos);
+                console.log("fetch repoList success=======>", repos);
             }
         }catch(error){
             setError(repos.error);
